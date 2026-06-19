@@ -1,26 +1,55 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: #000;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--accent); color: var(--accent-ink); }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: oklch(0.165 0.02 270); --bg2: oklch(0.2 0.025 270);
+  --surface: oklch(0.225 0.024 270); --surface2: oklch(0.27 0.028 270);
+  --border: oklch(0.32 0.03 270); --border2: oklch(0.4 0.035 270);
+  --text: oklch(0.97 0.008 270); --muted: oklch(0.66 0.02 270); --faint: oklch(0.5 0.02 270);
+  --accent: oklch(0.87 0.17 92); --accent-ink: oklch(0.22 0.06 92); --accent-dim: oklch(0.87 0.17 92 / 0.14);
+  --violet: oklch(0.72 0.16 292); --violet-dim: oklch(0.72 0.16 292 / 0.16);
+  --cyan: oklch(0.82 0.12 205); --good: oklch(0.78 0.16 152); --bad: oklch(0.66 0.2 25);
+  --grid-r: 188; --grid-g: 170; --grid-b: 255; --grid-a: 0.16;
 }
+[data-theme="light"] {
+  --bg: oklch(0.975 0.01 285); --bg2: oklch(0.95 0.018 290);
+  --surface: oklch(0.995 0.004 285); --surface2: oklch(0.965 0.012 285);
+  --border: oklch(0.9 0.015 285); --border2: oklch(0.84 0.02 285);
+  --text: oklch(0.27 0.03 285); --muted: oklch(0.52 0.03 285); --faint: oklch(0.66 0.025 285);
+  --accent: oklch(0.78 0.16 88); --accent-ink: oklch(0.99 0.01 88); --accent-dim: oklch(0.78 0.16 88 / 0.16);
+  --violet: oklch(0.58 0.18 292); --violet-dim: oklch(0.58 0.18 292 / 0.12);
+  --grid-r: 120; --grid-g: 110; --grid-b: 170; --grid-a: 0.14;
+}
+[data-accent="aurora"] { --accent: oklch(0.78 0.14 330); --accent-ink: oklch(0.99 0.01 330); --accent-dim: oklch(0.78 0.14 330 / 0.16); --violet: oklch(0.74 0.15 280); --grid-r: 230; --grid-g: 170; --grid-b: 230; }
+[data-accent="cyber"] { --accent: oklch(0.78 0.16 200); --accent-ink: oklch(0.16 0.05 250); --accent-dim: oklch(0.78 0.16 200 / 0.16); --violet: oklch(0.66 0.18 292); --grid-r: 120; --grid-g: 200; --grid-b: 255; }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes riseIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes shimmer { 0%, 100% { opacity: .55; } 50% { opacity: .95; } }
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes sheen { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+@keyframes sharpen { from { filter: blur(9px); opacity: .4; letter-spacing: 2px; } to { filter: blur(0); opacity: 1; letter-spacing: 0; } }
+@keyframes glowpulse { 0%, 100% { box-shadow: 0 0 0 0 var(--violet-dim); } 50% { box-shadow: 0 0 0 8px transparent; } }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+.veil-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.veil-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 20px; border: 3px solid transparent; background-clip: padding-box; }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* hover/focus helpers ported from the design's style-hover/style-focus */
+.veil-hover-bright:hover { filter: brightness(1.07); }
+.veil-hover-bright6:hover { filter: brightness(1.06); }
+.veil-hover-lift:hover { border-color: var(--border2); transform: translateY(-2px); }
+.veil-hover-border:hover { border-color: var(--border2); }
+.veil-hover-white05:hover { background: rgba(255,255,255,.1); }
+.veil-cta:hover { transform: translateY(-2px); box-shadow: 0 20px 50px rgba(255,214,10,.32); }
+.veil-focus-violet:focus { border-color: var(--violet); }
+.veil-hover-row:hover { background: var(--bg2); }
