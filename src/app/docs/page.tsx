@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
@@ -24,15 +25,15 @@ export default function DocsPage() {
     <div style={{ minHeight: "100vh", background: "#0e0d14", color: "#f4f3f8", fontFamily: "'Instrument Sans', sans-serif" }}>
       {/* topbar */}
       <div style={{ position: "sticky", top: 0, zIndex: 10, borderBottom: "1px solid #1e1d2a", background: "rgba(14,13,20,.85)", backdropFilter: "blur(16px)", padding: "14px 32px", display: "flex", alignItems: "center", gap: 14 }}>
-        <a href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none" }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 9, textDecoration: "none" }}>
           <div style={{ width: 26, height: 26, borderRadius: 7, background: "#16151f", border: "1px solid #2a2938", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ width: 11, height: 11, borderRadius: 3, background: "#FFD60A" }} />
           </div>
           <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 16, color: "#f4f3f8" }}>VEIL</span>
-        </a>
+        </Link>
         <span style={{ color: "#3a3848", fontSize: 16 }}>/</span>
         <span style={{ fontSize: 14, color: "#888", fontWeight: 500 }}>Documentation</span>
-        <a href="/" style={{ marginLeft: "auto", padding: "7px 14px", borderRadius: 9, border: "1px solid #2a2938", background: "transparent", color: "#aaa", fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "'Instrument Sans', sans-serif" }}>← Back to app</a>
+        <Link href="/" style={{ marginLeft: "auto", padding: "7px 14px", borderRadius: 9, border: "1px solid #2a2938", background: "transparent", color: "#aaa", fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "'Instrument Sans', sans-serif" }}>← Back to app</Link>
       </div>
 
       <div style={{ display: "flex", maxWidth: 1100, margin: "0 auto", padding: "48px 24px" }}>
@@ -50,7 +51,7 @@ export default function DocsPage() {
         <main style={{ flex: 1, minWidth: 0 }}>
 
           <Section id="overview" title="What is VEIL?">
-            <P>VEIL is a front-end for Zama's official <B>Confidential Wrapper Registry</B> on Ethereum Sepolia. It lets you wrap standard ERC-20 tokens into their encrypted ERC-7984 equivalents — where balances are hidden on-chain using Fully Homomorphic Encryption (FHE).</P>
+            <P>VEIL is a front-end for Zama&apos;s official <B>Confidential Wrapper Registry</B> on Ethereum Sepolia. It lets you wrap standard ERC-20 tokens into their encrypted ERC-7984 equivalents — where balances are hidden on-chain using Fully Homomorphic Encryption (FHE).</P>
             <P>Nobody — not even the chain — can read your balance. Only you can decrypt it, using your wallet signature.</P>
             <Cards items={[
               { icon: "▦", title: "Registry", desc: "Browse all 8 official ERC-20 ↔ ERC-7984 pairs registered by Zama on Sepolia." },
@@ -96,7 +97,7 @@ export default function DocsPage() {
           </Section>
 
           <Section id="unwrap" title="Unwrapping (ERC-7984 → ERC-20)">
-            <P>Unwrapping is a <B>two-step async process</B> because the amount to burn is encrypted — the chain can't read it directly. The FHE coprocessor needs to decrypt it publicly before the underlying tokens can be released.</P>
+            <P>Unwrapping is a <B>two-step async process</B> because the amount to burn is encrypted — the chain can&apos;t read it directly. The FHE coprocessor needs to decrypt it publicly before the underlying tokens can be released.</P>
             <Steps items={[
               "Switch to Unwrap mode and reveal your balance (click Reveal balance if not already decrypted)",
               "Enter the amount to unwrap",
@@ -115,16 +116,16 @@ export default function DocsPage() {
               "The relayer verifies your signature and decrypts only the balance belonging to your address",
               "The plaintext balance appears — only in your browser, never on-chain",
             ]} />
-            <P>The Decrypt tab also supports <B>arbitrary decrypt</B> — paste any ERC-7984 contract address to decrypt your balance in that token, even if it's not in the registry.</P>
+            <P>The Decrypt tab also supports <B>arbitrary decrypt</B> — paste any ERC-7984 contract address to decrypt your balance in that token, even if it&apos;s not in the registry.</P>
             <Callout>Your signature expires after 7 days. If you wrap more tokens, click 🔓 again to get the updated balance.</Callout>
           </Section>
 
           <Section id="fhe" title="How FHE works">
-            <P><B>Fully Homomorphic Encryption (FHE)</B> lets smart contracts perform computations on encrypted data without ever decrypting it. Zama's <a href="https://docs.zama.ai/fhevm" target="_blank" rel="noopener noreferrer" style={{ color: "#FFD60A" }}>fhEVM</a> brings this to Ethereum.</P>
+            <P><B>Fully Homomorphic Encryption (FHE)</B> lets smart contracts perform computations on encrypted data without ever decrypting it. Zama&apos;s <a href="https://docs.zama.ai/fhevm" target="_blank" rel="noopener noreferrer" style={{ color: "#FFD60A" }}>fhEVM</a> brings this to Ethereum.</P>
             <P>When you wrap tokens:</P>
             <ul style={{ paddingLeft: 20, color: "#aaa", lineHeight: 2, fontSize: 14 }}>
               <li>Your balance is stored as an <Code>euint64</Code> — an encrypted 64-bit integer</li>
-              <li>Transfers between confidential token holders work without either party seeing the other's balance</li>
+              <li>Transfers between confidential token holders work without either party seeing the other&apos;s balance</li>
               <li>The ERC-7984 standard defines the interface for these confidential tokens</li>
             </ul>
             <P>When you decrypt:</P>
