@@ -283,7 +283,8 @@ export default function Home() {
           args: [p.confidentialTokenAddress, amtBig],
           gas: BigInt(100_000),
         });
-        await publicClient.waitForTransactionReceipt({ hash: approveTx });
+        const approveReceipt = await publicClient.waitForTransactionReceipt({ hash: approveTx });
+        if (approveReceipt.status === "reverted") throw new Error("Approve transaction reverted");
         setWrapStep(2);
         // Use sendTransaction with pre-encoded calldata — bypasses MetaMask's
         // internal eth_estimateGas which fails on FHE coprocessor calls and
@@ -294,7 +295,8 @@ export default function Home() {
           gas: BigInt(2_000_000),
           account: address,
         });
-        await publicClient.waitForTransactionReceipt({ hash: wrapTx });
+        const wrapReceipt = await publicClient.waitForTransactionReceipt({ hash: wrapTx });
+        if (wrapReceipt.status === "reverted") throw new Error("Wrap transaction reverted");
         setWrapStep(3);
         // freshly wrapped → re-encrypt the displayed confidential balance
         setDecrypted((s) => ({ ...s, [wrapPairId]: false }));
@@ -371,7 +373,8 @@ export default function Home() {
           gas: BigInt(1_000_000),
           account: address,
         });
-        await publicClient.waitForTransactionReceipt({ hash: finalizeTx });
+        const finalizeReceipt = await publicClient.waitForTransactionReceipt({ hash: finalizeTx });
+        if (finalizeReceipt.status === "reverted") throw new Error("Finalize unwrap reverted");
         setWrapStep(3);
         // confidential balance changed → require a fresh decrypt
         setDecrypted((s) => ({ ...s, [wrapPairId]: false }));
@@ -460,6 +463,7 @@ export default function Home() {
       const tx = await walletClient.writeContract({
         address: p.tokenAddress, abi: ERC20_MOCK_ABI, functionName: "mint",
         args: [address, parseUnits("1000", p.decimals ?? 18)],
+        gas: BigInt(200_000),
       });
       await publicClient.waitForTransactionReceipt({ hash: tx });
       setFaucetDone((s) => ({ ...s, [id]: true }));
