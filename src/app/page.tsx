@@ -496,6 +496,7 @@ export default function Home() {
   );
 
   const shortAddr = address ? short(address) : "";
+  const [walletOpen, setWalletOpen] = useState(false);
   const themeIcon = theme === "dark" ? "☀" : "☾";
 
   // shared style helpers
@@ -624,11 +625,72 @@ export default function Home() {
                 <button onClick={() => switchChain({ chainId: sepolia.id })} style={{ padding: "8px 13px", borderRadius: 11, cursor: "pointer", border: "1px solid var(--bad)", background: "transparent", color: "var(--bad)", fontFamily: "'Instrument Sans'", fontWeight: 600, fontSize: 13 }}>Switch to Sepolia</button>
               )}
               <button onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))} title="Toggle theme" className="veil-hover-border" style={{ width: 38, height: 38, borderRadius: 11, cursor: "pointer", border: "1px solid var(--border)", background: "var(--surface)", color: "var(--muted)", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s" }}>{themeIcon}</button>
-              <button onClick={() => disconnect()} className="veil-hover-border" style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 9px 8px 13px", borderRadius: 11, cursor: "pointer", border: "1px solid var(--border)", background: "var(--surface)", transition: "border-color .2s" }}>
-                <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--good)", boxShadow: "0 0 8px var(--good)" }} />
-                <span style={{ fontFamily: "'JetBrains Mono'", fontSize: 12.5, fontWeight: 500, color: "var(--text)" }}>{shortAddr}</span>
-                <span style={{ width: 24, height: 24, borderRadius: 7, background: "linear-gradient(135deg,var(--accent),var(--violet))" }} />
-              </button>
+              <div style={{ position: "relative" }}>
+                <button onClick={() => setWalletOpen(o => !o)} className="veil-hover-border" style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 9px 8px 13px", borderRadius: 11, cursor: "pointer", border: `1px solid ${walletOpen ? "var(--accent)" : "var(--border)"}`, background: "var(--surface)", transition: "border-color .2s" }}>
+                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--good)", boxShadow: "0 0 8px var(--good)" }} />
+                  <span style={{ fontFamily: "'JetBrains Mono'", fontSize: 12.5, fontWeight: 500, color: "var(--text)" }}>{shortAddr}</span>
+                  <span style={{ width: 24, height: 24, borderRadius: 7, background: "linear-gradient(135deg,var(--accent),var(--violet))" }} />
+                </button>
+
+                {walletOpen && (
+                  <>
+                    {/* backdrop */}
+                    <div onClick={() => setWalletOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 29 }} />
+                    {/* dropdown */}
+                    <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, zIndex: 30, minWidth: 220, borderRadius: 14, background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 16px 48px oklch(0 0 0 / .4)", overflow: "hidden", animation: "popIn .15s ease both" }}>
+                      {/* wallet info header */}
+                      <div style={{ padding: "12px 14px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg,var(--accent),var(--violet))", flexShrink: 0 }} />
+                        <div>
+                          <div style={{ fontFamily: "'JetBrains Mono'", fontSize: 12, fontWeight: 600, color: "var(--text)" }}>{shortAddr}</div>
+                          <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 2 }}>Sepolia testnet</div>
+                        </div>
+                      </div>
+
+                      {/* menu items */}
+                      {[
+                        {
+                          icon: "⧉", label: "Copy address",
+                          action: () => { navigator.clipboard.writeText(address ?? ""); showToast("⧉", "var(--surface2)", "Copied", "Address copied to clipboard"); setWalletOpen(false); }
+                        },
+                        {
+                          icon: "↗", label: "View on Etherscan",
+                          action: () => { window.open(`https://sepolia.etherscan.io/address/${address}`, "_blank"); setWalletOpen(false); }
+                        },
+                        {
+                          icon: "📄", label: "Zama docs",
+                          action: () => { window.open("https://docs.zama.ai/fhevm", "_blank"); setWalletOpen(false); }
+                        },
+                        {
+                          icon: "◎", label: "ERC-7984 spec",
+                          action: () => { window.open("https://eips.ethereum.org/EIPS/eip-7984", "_blank"); setWalletOpen(false); }
+                        },
+                        {
+                          icon: "⛲", label: "Sepolia ETH faucet",
+                          action: () => { window.open("https://sepoliafaucet.com", "_blank"); setWalletOpen(false); }
+                        },
+                      ].map(item => (
+                        <button key={item.label} onClick={item.action} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "transparent", border: "none", cursor: "pointer", fontFamily: "'Instrument Sans'", fontSize: 13.5, fontWeight: 500, color: "var(--text)", textAlign: "left", transition: "background .15s" }}
+                          onMouseEnter={e => (e.currentTarget.style.background = "var(--surface2)")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+                          <span style={{ width: 18, textAlign: "center", color: "var(--muted)", fontSize: 14 }}>{item.icon}</span>
+                          {item.label}
+                        </button>
+                      ))}
+
+                      {/* disconnect — red at bottom */}
+                      <div style={{ borderTop: "1px solid var(--border)", padding: "6px 0" }}>
+                        <button onClick={() => { disconnect(); setWalletOpen(false); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "transparent", border: "none", cursor: "pointer", fontFamily: "'Instrument Sans'", fontSize: 13.5, fontWeight: 600, color: "var(--bad)", textAlign: "left", transition: "background .15s" }}
+                          onMouseEnter={e => (e.currentTarget.style.background = "color-mix(in oklch, var(--bad) 10%, transparent)")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+                          <span style={{ width: 18, textAlign: "center", fontSize: 14 }}>⏻</span>
+                          Disconnect
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </header>
 
