@@ -79,7 +79,7 @@ export default function DocsPage() {
               "Connect your wallet on Sepolia",
               "Go to the Faucet tab",
               "Click Claim tokens on any pair",
-              "Approve the transaction in MetaMask",
+              "Approve the transaction in your wallet",
               "1,000 tokens land in your wallet — check the Registry tab to see your updated balance",
             ]} />
             <Callout type="info">You need Sepolia ETH for gas. Get some free at <a href="https://sepoliafaucet.com" target="_blank" rel="noopener noreferrer" style={{ color: "#FFD60A" }}>sepoliafaucet.com</a>.</Callout>
@@ -89,8 +89,8 @@ export default function DocsPage() {
             <P>Wrapping locks your public ERC-20 tokens in the wrapper contract and mints an equivalent amount of encrypted ERC-7984 tokens to your address. After wrapping, your confidential balance is hidden — no one can see it.</P>
             <Steps items={[
               "Select a token and enter an amount",
-              "Click Wrap — MetaMask will ask you to Approve (lets the wrapper pull your tokens)",
-              "After approval confirms, MetaMask asks you to confirm the Wrap transaction",
+              "Click Wrap — your wallet will ask you to Approve (lets the wrapper pull your tokens)",
+              "After approval confirms, your wallet asks you to confirm the Wrap transaction",
               "Done — your ERC-20 balance decreases, your confidential balance increases (but stays hidden)",
             ]} />
             <Callout type="warning">The wrap amount is in <B>underlying decimals</B>. The wrapper internally divides by <Code>rate()</Code> to calculate your confidential units. For WETH (rate 10^12): wrapping 1 WETH gives you 1 cWETH.</Callout>
@@ -112,7 +112,7 @@ export default function DocsPage() {
             <P>FHE balances are encrypted on-chain. To read your own balance, you generate a temporary keypair, sign an EIP-712 message authorising the relayer to decrypt only for you, and the relayer returns the plaintext — never touching the chain.</P>
             <Steps items={[
               "Click 🔓 on any registry card, or go to the Decrypt tab",
-              "MetaMask asks you to sign an EIP-712 typed message (no gas, no transaction)",
+              "Your wallet asks you to sign an EIP-712 typed message (no gas, no transaction)",
               "The relayer verifies your signature and decrypts only the balance belonging to your address",
               "The plaintext balance appears — only in your browser, never on-chain",
             ]} />
@@ -138,36 +138,45 @@ export default function DocsPage() {
           </Section>
 
           <Section id="contracts" title="Contract addresses (Sepolia)">
-            <P>All contracts are deployed on Ethereum Sepolia testnet.</P>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, fontFamily: "'JetBrains Mono', monospace" }}>
+            <P>All contracts are deployed on Ethereum Sepolia testnet and registered by Zama. Click any address to view it on Etherscan.</P>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5, fontFamily: "'JetBrains Mono', monospace" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #1e1d2a" }}>
-                  {["Token", "ERC-20 address", "ERC-7984 address"].map(h => (
-                    <th key={h} style={{ padding: "8px 12px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 11.5, textTransform: "uppercase", letterSpacing: ".05em" }}>{h}</th>
+                  {["Token", "ERC-20 (underlying)", "ERC-7984 (confidential)"].map(h => (
+                    <th key={h} style={{ padding: "8px 12px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: ".05em" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {[
-                  ["USDTMock", "0xa7dA08FafDC9097…", "0x4E7B06D7896559…"],
-                  ["USDCMock", "0x9b5Cd13b8eFbB5…", "0x7c5BF43B851c1d…"],
-                  ["WETHMock", "0xff54739b16576F…", "0x46208622DA27d9…"],
-                  ["BRONMock", "0xFf021fB13cA64e…", "0xaa5612FA27c927…"],
-                  ["ZAMAMock", "0x75355a85c6FB9d…", "0xf2D628d2598aF4…"],
-                  ["ctGBPMock", "0x93c931278A2aad…", "0xfCE5c7069c5525…"],
-                  ["cXAUtMock", "0x24377AE4AA0C45…", "0xe4FcF848739845…"],
-                  ["ctGBP", "0xf6ef9adb61a48e…", "0x167dc962808b32…"],
+                  ["USDTMock",  "0xa7dA08FafDC9097Cc0E7D4f113A61e31d7e8e9b0", "0x4E7B06D78965594eB5EF5414c357ca21E1554491"],
+                  ["USDCMock",  "0x9b5Cd13b8eFbB58Dc25A05CF411D8056058aDFfF", "0x7c5BF43B851c1dff1a4feE8dB225b87f2C223639"],
+                  ["WETHMock",  "0xff54739b16576FA5402F211D0b938469Ab9A5f3F", "0x46208622DA27d91db4f0393733C8BA082ed83158"],
+                  ["BRONMock",  "0xFf021fB13cA64e5354c62c954b949a88cfDEb25E", "0xaa5612FA27c927a0c7961f5AEFEE5ba3A0F9C891"],
+                  ["ZAMAMock",  "0x75355a85c6FB9df5f0C80FF54e8747EEe9a0BF57", "0xf2D628d2598aF4eAF94CB76a437Ff86CA78FfbFB"],
+                  ["ctGBPMock", "0x93c931278A2aad1916783F952f94276eA5111442", "0xfCE5c7069c5525eF6c8C2b2E35A745bA20a2F7CC"],
+                  ["cXAUtMock", "0x24377AE4AA0C45ecEe71225007f17c5D423dd940", "0xe4FcF848739845BC81Dee1d5352cf3844F0a60C7"],
+                  ["ctGBP",     "0xf6ef9adb61a48e29e36bc873070a46a3d2667ff3", "0x167dc962808b32cfffc7e14b5018c0be06a3a208"],
                 ].map(([name, erc20, conf]) => (
                   <tr key={name} style={{ borderBottom: "1px solid #16151f" }}>
-                    <td style={{ padding: "10px 12px", color: "#f4f3f8", fontWeight: 600 }}>{name}</td>
-                    <td style={{ padding: "10px 12px", color: "#888" }}>{erc20}</td>
-                    <td style={{ padding: "10px 12px", color: "#888" }}>{conf}</td>
+                    <td style={{ padding: "10px 12px", color: "#f4f3f8", fontWeight: 600, fontSize: 13 }}>{name}</td>
+                    <td style={{ padding: "10px 12px" }}>
+                      <a href={`https://sepolia.etherscan.io/address/${erc20}`} target="_blank" rel="noopener noreferrer" style={{ color: "#9d8eff", textDecoration: "none" }} title={erc20}>
+                        {erc20.slice(0, 10)}…{erc20.slice(-6)}
+                      </a>
+                    </td>
+                    <td style={{ padding: "10px 12px" }}>
+                      <a href={`https://sepolia.etherscan.io/address/${conf}`} target="_blank" rel="noopener noreferrer" style={{ color: "#9d8eff", textDecoration: "none" }} title={conf}>
+                        {conf.slice(0, 10)}…{conf.slice(-6)}
+                      </a>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <div style={{ marginTop: 20 }}>
-              <Addr label="Wrappers Registry" addr="0x2f0750Bbb0A246059d80e94c454586a7F27a128e" />
+              <P style={{ fontSize: 13, color: "#666" }}>The <B>Wrappers Registry</B> below is Zama&apos;s official onchain registry — it&apos;s not your wallet address. VEIL reads all 8 pairs directly from this contract on every load.</P>
+              <Addr label="Wrappers Registry (Zama)" addr="0x2f0750Bbb0A246059d80e94c454586a7F27a128e" />
             </div>
           </Section>
 
@@ -188,8 +197,8 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
-function P({ children }: { children: React.ReactNode }) {
-  return <p style={{ fontSize: 15, lineHeight: 1.75, color: "#aaa", marginBottom: 14 }}>{children}</p>;
+function P({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return <p style={{ fontSize: 15, lineHeight: 1.75, color: "#aaa", marginBottom: 14, ...style }}>{children}</p>;
 }
 
 function B({ children }: { children: React.ReactNode }) {
