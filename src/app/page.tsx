@@ -280,12 +280,16 @@ export default function Home() {
         const approveTx = await walletClient.writeContract({
           address: p.tokenAddress, abi: ERC20_ABI, functionName: "approve",
           args: [p.confidentialTokenAddress, amtBig],
+          gas: BigInt(100_000),
         });
         await publicClient.waitForTransactionReceipt({ hash: approveTx });
         setWrapStep(2);
+        // Explicit gas bypasses viem's eth_estimateGas — FHE operations return
+        // inflated estimates that exceed the block gas limit on Zama Sepolia.
         const wrapTx = await walletClient.writeContract({
           address: p.confidentialTokenAddress, abi: WRAPPER_ABI, functionName: "wrap",
           args: [address, amtBig],
+          gas: BigInt(2_000_000),
         });
         await publicClient.waitForTransactionReceipt({ hash: wrapTx });
         setWrapStep(3);
@@ -318,6 +322,7 @@ export default function Home() {
         const unwrapTx = await walletClient.writeContract({
           address: p.confidentialTokenAddress, abi: WRAPPER_ABI, functionName: "unwrap",
           args: [address, address, toHex(enc.handles[0]), toHex(enc.inputProof)],
+          gas: BigInt(2_000_000),
         });
         const receipt = await publicClient.waitForTransactionReceipt({ hash: unwrapTx });
 
@@ -350,6 +355,7 @@ export default function Home() {
         const finalizeTx = await walletClient.writeContract({
           address: p.confidentialTokenAddress, abi: WRAPPER_ABI, functionName: "finalizeUnwrap",
           args: [requestId, cleartext, decryptionProof],
+          gas: BigInt(1_000_000),
         });
         await publicClient.waitForTransactionReceipt({ hash: finalizeTx });
         setWrapStep(3);
