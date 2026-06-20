@@ -314,19 +314,32 @@ export default function Home() {
           return;
         }
         const provider = (window as { ethereum?: unknown }).ethereum as import("ethers").Eip1193Provider;
+        if (!provider) throw new Error("window.ethereum not found — connect a wallet first");
+
+        console.log("[unwrap] init FHE SDK…");
         const fhevm = await getFhevm(provider);
+        console.log("[unwrap] SDK ready, creating encrypted input…");
 
         // Step 1 — build encrypted input + submit unwrap request
         setWrapStep(1);
         const input = fhevm.createEncryptedInput(p.confidentialTokenAddress, address);
         input.add64(confAmtBig);
+        console.log("[unwrap] encrypting…");
         const enc = await input.encrypt();
+        console.log("[unwrap] encrypted, handles:", enc.handles.length, "proof len:", enc.inputProof.length);
+
+        if (!enc.handles[0]) throw new Error("FHE encryption produced no handle");
+        const encHandle = toHex(enc.handles[0]) as `0x${string}`;
+        const encProof = toHex(enc.inputProof) as `0x${string}`;
+        console.log("[unwrap] handle:", encHandle.slice(0, 18), "proof:", encProof.slice(0, 18));
+
         const unwrapTx = await walletClient.sendTransaction({
           to: p.confidentialTokenAddress,
-          data: encodeFunctionData({ abi: WRAPPER_ABI, functionName: "unwrap", args: [address, address, toHex(enc.handles[0]), toHex(enc.inputProof)] }),
+          data: encodeFunctionData({ abi: WRAPPER_ABI, functionName: "unwrap", args: [address, address, encHandle, encProof] }),
           gas: BigInt(2_000_000),
           account: address,
         });
+        console.log("[unwrap] tx submitted:", unwrapTx);
         const receipt = await publicClient.waitForTransactionReceipt({ hash: unwrapTx });
 
         // Recover the unwrap request id from the emitted event
