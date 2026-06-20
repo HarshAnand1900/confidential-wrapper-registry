@@ -27,6 +27,7 @@ import {
 import { getFhevm } from "@/lib/fhe";
 import { playSuccess, playCoin } from "@/lib/sound";
 import { VeilCanvas } from "@/components/VeilCanvas";
+import { TokenIcon } from "@/components/TokenIcon";
 
 type Tab = "registry" | "wrap" | "decrypt" | "faucet";
 type Theme = "dark" | "light";
@@ -195,9 +196,19 @@ export default function Home() {
   }, [pairs, wrapPairId]);
 
   // ---------- decrypt ----------
+  const ZERO_HANDLE = "0x" + "0".repeat(64);
+
   const runUserDecrypt = useCallback(
     async (confAddr: `0x${string}`): Promise<bigint> => {
       if (!address || !walletClient || !publicClient) throw new Error("Wallet not ready");
+      // Read the ciphertext handle first. An uninitialised balance (never wrapped)
+      // returns bytes32(0), which has no ACL entry — the relayer would reject it.
+      // A zero handle simply means a zero balance, so short-circuit.
+      const handle = await publicClient.readContract({
+        address: confAddr, abi: WRAPPER_ABI, functionName: "confidentialBalanceOf", args: [address],
+      });
+      if (!handle || handle.toLowerCase() === ZERO_HANDLE) return BigInt(0);
+
       const provider = (window as { ethereum?: unknown }).ethereum as import("ethers").Eip1193Provider;
       const fhevm = await getFhevm(provider);
       const { publicKey, privateKey } = fhevm.generateKeypair();
@@ -206,16 +217,13 @@ export default function Home() {
       const sig = await walletClient.signTypedData(
         eip712 as Parameters<typeof walletClient.signTypedData>[0]
       );
-      const handle = await publicClient.readContract({
-        address: confAddr, abi: WRAPPER_ABI, functionName: "confidentialBalanceOf", args: [address],
-      });
       const result = await fhevm.userDecrypt(
         [{ handle, contractAddress: confAddr }],
         privateKey, publicKey, sig.replace("0x", ""), [confAddr], address, startTs, 7
       );
       return Object.values(result)[0] as bigint;
     },
-    [address, walletClient, publicClient]
+    [address, walletClient, publicClient, ZERO_HANDLE]
   );
 
   const decrypt = (id: string) => async () => {
@@ -732,7 +740,7 @@ export default function Home() {
                         <div key={id} className="veil-hover-lift" style={{ padding: 18, borderRadius: 18, background: "var(--surface)", border: "1px solid var(--border)", transition: "border-color .2s, transform .2s", animation: "popIn .35s ease both" }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-                              <div style={{ width: 42, height: 42, borderRadius: 13, background: p.dotColor, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 14, color: "#fff" }}>{p.glyph}</div>
+                              <TokenIcon symbol={p.symbol} size={42} radius={13} />
                               <div>
                                 <div style={{ display: "flex", alignItems: "center", gap: 7, fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: 16 }}>{p.confSymbol}<span style={{ fontSize: 11, color: "var(--violet)", background: "var(--violet-dim)", padding: "2px 7px", borderRadius: 6, fontFamily: "'Instrument Sans'", fontWeight: 600 }}>ERC-7984</span></div>
                                 <div style={{ fontSize: 12.5, color: "var(--muted)" }}>{p.name}</div>
@@ -792,7 +800,7 @@ export default function Home() {
                       return (
                         <div key={id} className="veil-hover-row" style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1.1fr 1.1fr 1.3fr", gap: 12, padding: "14px 18px", alignItems: "center", borderBottom: "1px solid var(--border)", transition: "background .15s" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                            <div style={{ width: 32, height: 32, borderRadius: 10, background: p.dotColor, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 12, color: "#fff" }}>{p.glyph}</div>
+                            <TokenIcon symbol={p.symbol} size={32} radius={10} />
                             <div><div style={{ fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: 14 }}>{p.confSymbol}</div><div style={{ fontSize: 11.5, color: "var(--muted)" }}>{p.name} · {p.decimals}→{p.confDecimals ?? confDecimalsOf(p.decimals ?? 18)} dec · rate {formatRate(p.rate)}</div></div>
                           </div>
                           <div style={{ fontFamily: "'JetBrains Mono'", fontSize: 13 }}>{erc20Fmt}</div>
@@ -841,7 +849,7 @@ export default function Home() {
                       const sel = wrapPairId === id;
                       return (
                         <button key={id} onClick={() => { setWrapPairId(id); setWrapStep(0); }} style={{ display: "flex", alignItems: "center", gap: 7, padding: "8px 12px", borderRadius: 99, cursor: "pointer", fontFamily: "'Instrument Sans'", fontWeight: 600, fontSize: 13, color: sel ? "var(--text)" : "var(--muted)", background: sel ? "var(--surface2)" : "transparent", border: `1px solid ${sel ? "var(--border2)" : "var(--border)"}`, transition: "all .2s" }}>
-                          <span style={{ width: 18, height: 18, borderRadius: 6, background: p.dotColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9, color: "#fff", fontFamily: "'Space Grotesk'", fontWeight: 700 }}>{p.glyph}</span>{p.confSymbol}
+                          <TokenIcon symbol={p.symbol} size={18} radius={6} />{p.confSymbol}
                         </button>
                       );
                     })}
@@ -861,7 +869,7 @@ export default function Home() {
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <input value={amount} onChange={(e) => { setAmount(e.target.value.replace(/[^0-9.]/g, "")); setWrapStep(0); }} placeholder="0.0" inputMode="decimal" style={{ flex: 1, background: "transparent", border: "none", outline: "none", fontFamily: "'JetBrains Mono'", fontSize: 28, fontWeight: 500, color: "var(--text)", minWidth: 0 }} />
                       <button onClick={onMax} style={{ padding: "6px 11px", borderRadius: 8, cursor: "pointer", border: "1px solid var(--border2)", background: "transparent", color: "var(--accent)", fontWeight: 600, fontSize: 12, fontFamily: "'Instrument Sans'" }}>MAX</button>
-                      <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "8px 12px", borderRadius: 99, background: "var(--surface)", border: "1px solid var(--border)" }}><span style={{ width: 20, height: 20, borderRadius: 6, background: wrapPair.dotColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", fontFamily: "'Space Grotesk'", fontWeight: 700 }}>{wrapPair.glyph}</span><span style={{ fontWeight: 600, fontSize: 14, fontFamily: "'Space Grotesk'" }}>{fromSym}</span></div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "8px 12px", borderRadius: 99, background: "var(--surface)", border: "1px solid var(--border)" }}><TokenIcon symbol={wrapPair.symbol} size={20} radius={6} /><span style={{ fontWeight: 600, fontSize: 14, fontFamily: "'Space Grotesk'" }}>{fromSym}</span></div>
                     </div>
                   </div>
 
@@ -932,7 +940,7 @@ export default function Home() {
                   <div style={{ padding: 24, borderRadius: 20, background: "linear-gradient(160deg,var(--violet-dim),var(--surface))", border: "1px solid color-mix(in oklch, var(--violet) 30%, transparent)", animation: "popIn .4s ease both" }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: 12, background: arbResult.dotColor, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 13, color: "#fff" }}>{arbResult.glyph}</div>
+                        <TokenIcon symbol={arbResult.sym} size={40} radius={12} />
                         <div><div style={{ fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: 16 }}>{arbResult.sym}</div><div style={{ fontSize: 12, color: "var(--muted)", fontFamily: "'JetBrains Mono'" }}>{arbResult.short}</div></div>
                       </div>
                       <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--good)", background: "color-mix(in oklch, var(--good) 16%, transparent)", padding: "6px 11px", borderRadius: 99, fontWeight: 600 }}>✓ Decrypted</span>
@@ -958,7 +966,7 @@ export default function Home() {
                     return (
                       <div key={id} style={{ padding: 18, borderRadius: 18, background: "var(--surface)", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 14 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-                          <div style={{ width: 40, height: 40, borderRadius: 12, background: p.dotColor, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 13, color: "#fff" }}>{p.glyph}</div>
+                          <TokenIcon symbol={p.symbol} size={40} radius={12} />
                           <div><div style={{ fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: 15 }}>{p.symbol}</div><div style={{ fontSize: 12, color: "var(--muted)" }}>{p.name}</div></div>
                         </div>
                         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
