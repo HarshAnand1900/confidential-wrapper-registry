@@ -370,10 +370,14 @@ export default function Home() {
     } catch (e) {
       setWrapStep(0);
       console.error("[wrap/unwrap error]", e);
-      const msg = e instanceof Error ? e.message : String(e);
-      // Surface contract revert reason if present (viem wraps it in the message).
-      const revert = msg.match(/reason: ([^\n]+)/)?.[1] ?? msg.match(/reverted with the following reason:\s*([^\n]+)/)?.[1];
-      showToast("!", "var(--bad)", "Transaction failed", (revert ?? msg).slice(0, 80));
+      // viem errors expose .reason or .shortMessage; fall back to .message
+      const err = e as Record<string, unknown>;
+      const detail =
+        (typeof err.reason === "string" && err.reason) ||
+        (typeof err.shortMessage === "string" && err.shortMessage) ||
+        (typeof err.details === "string" && err.details) ||
+        (e instanceof Error ? e.message : String(e));
+      showToast("!", "var(--bad)", "Transaction failed", detail.slice(0, 100));
     }
   };
 
