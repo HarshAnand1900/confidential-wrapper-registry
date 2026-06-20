@@ -25,7 +25,7 @@ import {
   type TokenPair,
 } from "@/lib/registry";
 import { getFhevm } from "@/lib/fhe";
-import { playSuccess, sound1, sound2, sound3, sound4, sound5 } from "@/lib/sound";
+import { playSuccess, playCoin } from "@/lib/sound";
 import { VeilCanvas } from "@/components/VeilCanvas";
 
 type Tab = "registry" | "wrap" | "decrypt" | "faucet";
@@ -463,6 +463,7 @@ export default function Home() {
       });
       await publicClient.waitForTransactionReceipt({ hash: tx });
       setFaucetDone((s) => ({ ...s, [id]: true }));
+      playCoin();
       showToast("✓", "var(--good)", `Claimed 1,000 ${p.symbol}`, "Sent to " + short(address));
       loadBalances();
       setTimeout(() => setFaucetDone((s) => ({ ...s, [id]: false })), 4000);
@@ -899,22 +900,6 @@ export default function Home() {
                       </div>
                     );
                   })}
-                </div>
-
-                {/* Sound preview — temporary, remove after picking */}
-                <div style={{ marginTop: 28, padding: "16px 20px", borderRadius: 16, background: "var(--surface)", border: "1px solid var(--border)" }}>
-                  <div style={{ fontSize: 12.5, color: "var(--muted)", marginBottom: 12, fontWeight: 600 }}>🔊 Sound preview — click to hear, tell me which one you like</div>
-                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    {[
-                      { label: "1 · Uniswap chime", fn: sound1 },
-                      { label: "2 · Vault lock", fn: sound2 },
-                      { label: "3 · Coin drop", fn: sound3 },
-                      { label: "4 · Cyber ping", fn: sound4 },
-                      { label: "5 · Level up", fn: sound5 },
-                    ].map(({ label, fn }) => (
-                      <button key={label} onClick={fn} style={{ padding: "8px 14px", borderRadius: 10, cursor: "pointer", border: "1px solid var(--border)", background: "var(--surface2)", color: "var(--text)", fontSize: 13, fontFamily: "'Instrument Sans'", fontWeight: 500 }}>{label}</button>
-                    ))}
-                  </div>
                 </div>
               </div>
             )}
