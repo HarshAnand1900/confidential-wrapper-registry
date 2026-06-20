@@ -775,7 +775,13 @@ export default function Home() {
                   <div style={{ padding: 16, borderRadius: 14, background: "var(--bg2)", border: "1px solid var(--border)", marginBottom: 10 }}>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 9 }}>
                       <span style={{ fontSize: 12.5, color: "var(--muted)" }}>You send · {isWrap ? "public" : "confidential"}</span>
-                      <span style={{ fontSize: 12, color: "var(--faint)", fontFamily: "'JetBrains Mono'" }}>balance {fmtNum(fromBal)}</span>
+                      {!isWrap && !decrypted[wrapPairId] ? (
+                        <button onClick={decrypt(wrapPairId)} disabled={!!decrypting[wrapPairId]} style={{ display: "flex", alignItems: "center", gap: 5, padding: "3px 9px", borderRadius: 7, cursor: "pointer", border: "1px solid color-mix(in oklch, var(--violet) 40%, transparent)", background: "var(--violet-dim)", color: "var(--violet)", fontSize: 11.5, fontWeight: 600, fontFamily: "'Instrument Sans'" }}>
+                          {decrypting[wrapPairId] ? <span style={{ width: 10, height: 10, border: "1.5px solid var(--violet)", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin .7s linear infinite" }} /> : "🔓"} Reveal balance
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: 12, color: "var(--faint)", fontFamily: "'JetBrains Mono'" }}>balance {fmtNum(fromBal)}</span>
+                      )}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <input value={amount} onChange={(e) => { setAmount(e.target.value.replace(/[^0-9.]/g, "")); setWrapStep(0); }} placeholder="0.0" inputMode="decimal" style={{ flex: 1, background: "transparent", border: "none", outline: "none", fontFamily: "'JetBrains Mono'", fontSize: 28, fontWeight: 500, color: "var(--text)", minWidth: 0 }} />
