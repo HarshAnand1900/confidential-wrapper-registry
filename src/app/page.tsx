@@ -25,6 +25,7 @@ import {
   type TokenPair,
 } from "@/lib/registry";
 import { getFhevm } from "@/lib/fhe";
+import { playSuccess } from "@/lib/sound";
 import { VeilCanvas } from "@/components/VeilCanvas";
 
 type Tab = "registry" | "wrap" | "decrypt" | "faucet";
@@ -302,6 +303,7 @@ export default function Home() {
           delete n[wrapPairId];
           return n;
         });
+        playSuccess();
         showToast("✓", "var(--good)", `Wrapped ${fmtNum(amt)} ${p.symbol}`, "Balance is now confidential");
       } else {
         // Unwrap is async: encrypt the confidential amount (6-dec base units), submit an unwrap
@@ -378,6 +380,7 @@ export default function Home() {
           delete n[wrapPairId];
           return n;
         });
+        playSuccess();
         showToast("✓", "var(--good)", `Unwrapped ${fmtNum(amt)} ${p.confSymbol ?? p.symbol}`, "Now public on Sepolia");
       }
       loadBalances();
