@@ -250,14 +250,6 @@ export default function Home() {
   const goWrap = (id: string, mode: "wrap" | "unwrap") => () => {
     setWrapPairId(id); setWrapMode(mode); setWrapStep(0); setAmount(""); setTab("wrap");
   };
-  const onMax = () => {
-    const p = byId(wrapPairId);
-    if (!p) return;
-    const v = wrapMode === "wrap"
-      ? Number(formatUnits(erc20Bal[wrapPairId] ?? BigInt(0), p.decimals ?? 18))
-      : (decryptedVal[wrapPairId] ?? 0);
-    setAmount(String(v)); setWrapStep(0);
-  };
 
   const confirmWrap = async () => {
     const p = byId(wrapPairId);
