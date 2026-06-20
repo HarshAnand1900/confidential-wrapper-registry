@@ -195,4 +195,17 @@ export const FALLBACK_PAIRS: TokenPair[] = [
     glyph: "Au",
     dotColor: "linear-gradient(135deg,#F09242,#ffc089)",
   },
+  {
+    tokenAddress: "0xf6ef9adb61a48e29e36bc873070a46a3d2667ff3",
+    confidentialTokenAddress: "0x167dc962808b32cfffc7e14b5018c0be06a3a208",
+    isValid: true,
+    symbol: "tGBP",
+    name: "tGBP",
+    decimals: 18,
+    confSymbol: "ctGBP",
+    confName: "Confidential tGBP",
+    confDecimals: 6,
+    glyph: "£",
+    dotColor: "linear-gradient(135deg,#159E6E,#46d6a0)",
+  },
 ];
