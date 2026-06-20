@@ -123,36 +123,40 @@ export default function Home() {
       const valid = raw.filter((p) => p.isValid);
 
       // Read all token metadata live from chain — nothing hardcoded except cosmetics.
-      const enriched: TokenPair[] = await Promise.all(
-        valid.map(async (p) => {
-          const erc20 = { address: p.tokenAddress, abi: ERC20_ABI } as const;
-          const wrap = { address: p.confidentialTokenAddress, abi: WRAPPER_ABI } as const;
-          const [symbol, name, decimals, confSymbol, confName, rate] = await Promise.all([
-            publicClient.readContract({ ...erc20, functionName: "symbol" }).catch(() => undefined),
-            publicClient.readContract({ ...erc20, functionName: "name" }).catch(() => undefined),
-            publicClient.readContract({ ...erc20, functionName: "decimals" }).catch(() => 18),
-            publicClient.readContract({ ...wrap, functionName: "symbol" }).catch(() => undefined),
-            publicClient.readContract({ ...wrap, functionName: "name" }).catch(() => undefined),
-            publicClient.readContract({ ...wrap, functionName: "rate" }).catch(() => undefined),
-          ]);
-          const vis = visualFor(p.tokenAddress, symbol as string | undefined);
-          const dec = Number(decimals ?? 18);
-          return {
-            tokenAddress: p.tokenAddress,
-            confidentialTokenAddress: p.confidentialTokenAddress,
-            isValid: p.isValid,
-            symbol: symbol as string | undefined,
-            name: name as string | undefined,
-            decimals: dec,
-            confSymbol: confSymbol as string | undefined,
-            confName: confName as string | undefined,
-            confDecimals: confDecimalsOf(dec),
-            rate: rate as bigint | undefined,
-            glyph: vis.glyph,
-            dotColor: vis.dotColor,
-          };
-        })
-      );
+      // Load metadata sequentially to avoid rate-limiting the public RPC (40 parallel calls = drops).
+      const enriched: TokenPair[] = [];
+      const safeRead = (addr: `0x${string}`, abi: typeof ERC20_ABI | typeof WRAPPER_ABI, fn: string) =>
+        publicClient.readContract({ address: addr, abi: abi as typeof ERC20_ABI, functionName: fn } as Parameters<typeof publicClient.readContract>[0]).catch(() => undefined);
+
+      for (const p of valid) {
+        const [symbol, name, decimals, confSymbol, confName, rate] = await Promise.all([
+          safeRead(p.tokenAddress, ERC20_ABI, "symbol"),
+          safeRead(p.tokenAddress, ERC20_ABI, "name"),
+          safeRead(p.tokenAddress, ERC20_ABI, "decimals"),
+          safeRead(p.confidentialTokenAddress, WRAPPER_ABI, "symbol"),
+          safeRead(p.confidentialTokenAddress, WRAPPER_ABI, "name"),
+          safeRead(p.confidentialTokenAddress, WRAPPER_ABI, "rate"),
+        ]);
+
+        const dec = Number((decimals as number | undefined) ?? 18);
+        const sym = symbol as string | undefined;
+        const addrTail = p.tokenAddress.slice(-4).toUpperCase();
+        const vis = visualFor(p.tokenAddress, sym);
+        enriched.push({
+          tokenAddress: p.tokenAddress,
+          confidentialTokenAddress: p.confidentialTokenAddress,
+          isValid: p.isValid,
+          symbol: sym ?? `ERC20·${addrTail}`,
+          name: (name as string | undefined) ?? `Token ${addrTail}`,
+          decimals: dec,
+          confSymbol: (confSymbol as string | undefined) ?? `c·${addrTail}`,
+          confName: (confName as string | undefined) ?? `Conf·${addrTail}`,
+          confDecimals: confDecimalsOf(dec),
+          rate: rate as bigint | undefined,
+          glyph: vis.glyph,
+          dotColor: vis.dotColor,
+        });
+      }
 
       setPairs(enriched.length ? enriched : FALLBACK_PAIRS);
       setRegistrySource(enriched.length ? "onchain" : "local fallback");
@@ -365,8 +369,11 @@ export default function Home() {
       }, 2400);
     } catch (e) {
       setWrapStep(0);
-      const msg = e instanceof Error ? e.message : "Transaction failed";
-      showToast("!", "var(--bad)", "Transaction failed", msg.slice(0, 60));
+      console.error("[wrap/unwrap error]", e);
+      const msg = e instanceof Error ? e.message : String(e);
+      // Surface contract revert reason if present (viem wraps it in the message).
+      const revert = msg.match(/reason: ([^\n]+)/)?.[1] ?? msg.match(/reverted with the following reason:\s*([^\n]+)/)?.[1];
+      showToast("!", "var(--bad)", "Transaction failed", (revert ?? msg).slice(0, 80));
     }
   };
 

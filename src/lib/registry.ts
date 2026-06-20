@@ -42,7 +42,7 @@ export const WRAPPER_ABI = parseAbi([
   "function rate() view returns (uint256)",
   "function underlying() view returns (address)",
   "function confidentialBalanceOf(address account) view returns (bytes32)",
-  "function wrap(address to, uint256 amount) returns (bytes32)",
+  "function wrap(address to, uint256 amount)",
   "function unwrap(address from, address to, bytes32 encryptedAmount, bytes inputProof) returns (bytes32)",
   "function finalizeUnwrap(bytes32 unwrapRequestId, uint64 unwrapAmountCleartext, bytes decryptionProof)",
   "function unwrapAmount(bytes32 unwrapRequestId) view returns (bytes32)",
