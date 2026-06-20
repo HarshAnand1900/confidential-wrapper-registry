@@ -20,6 +20,7 @@ import {
   WRAPPER_ABI,
   FALLBACK_PAIRS,
   confDecimalsOf,
+  visualFor,
   type TokenPair,
 } from "@/lib/registry";
 import { getFhevm } from "@/lib/fhe";
@@ -76,7 +77,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
 
   const [pairs, setPairs] = useState<TokenPair[]>(FALLBACK_PAIRS);
-  const [registrySource, setRegistrySource] = useState<"onchain + local" | "local fallback">("local fallback");
+  const [registrySource, setRegistrySource] = useState<"onchain" | "local fallback">("local fallback");
   const [erc20Bal, setErc20Bal] = useState<Record<string, bigint>>({});
 
   const [decrypted, setDecrypted] = useState<Record<string, boolean>>({});
@@ -118,28 +119,38 @@ export default function Home() {
         abi: REGISTRY_ABI,
         functionName: "getTokenConfidentialTokenPairs",
       });
-      const enriched: TokenPair[] = raw
-        .filter((p) => p.isValid)
-        .map((p) => {
-          const fb = FALLBACK_PAIRS.find(
-            (f) => f.tokenAddress.toLowerCase() === p.tokenAddress.toLowerCase()
-          );
+      const valid = raw.filter((p) => p.isValid);
+
+      // Read all token metadata live from chain — nothing hardcoded except cosmetics.
+      const enriched: TokenPair[] = await Promise.all(
+        valid.map(async (p) => {
+          const erc20 = { address: p.tokenAddress, abi: ERC20_ABI } as const;
+          const wrap = { address: p.confidentialTokenAddress, abi: WRAPPER_ABI } as const;
+          const [symbol, name, decimals, confSymbol, confName] = await Promise.all([
+            publicClient.readContract({ ...erc20, functionName: "symbol" }).catch(() => undefined),
+            publicClient.readContract({ ...erc20, functionName: "name" }).catch(() => undefined),
+            publicClient.readContract({ ...erc20, functionName: "decimals" }).catch(() => 18),
+            publicClient.readContract({ ...wrap, functionName: "symbol" }).catch(() => undefined),
+            publicClient.readContract({ ...wrap, functionName: "name" }).catch(() => undefined),
+          ]);
+          const vis = visualFor(p.tokenAddress, symbol as string | undefined);
           return {
             tokenAddress: p.tokenAddress,
             confidentialTokenAddress: p.confidentialTokenAddress,
             isValid: p.isValid,
-            symbol: fb?.symbol, name: fb?.name, decimals: fb?.decimals,
-            confSymbol: fb?.confSymbol, confName: fb?.confName,
-            glyph: fb?.glyph ?? "?",
-            dotColor: fb?.dotColor ?? "linear-gradient(135deg,#888,#bbb)",
+            symbol: symbol as string | undefined,
+            name: name as string | undefined,
+            decimals: Number(decimals ?? 18),
+            confSymbol: confSymbol as string | undefined,
+            confName: confName as string | undefined,
+            glyph: vis.glyph,
+            dotColor: vis.dotColor,
           };
-        });
-      for (const fb of FALLBACK_PAIRS) {
-        if (!enriched.find((e) => e.tokenAddress.toLowerCase() === fb.tokenAddress.toLowerCase()))
-          enriched.push(fb);
-      }
+        })
+      );
+
       setPairs(enriched.length ? enriched : FALLBACK_PAIRS);
-      setRegistrySource(enriched.length ? "onchain + local" : "local fallback");
+      setRegistrySource(enriched.length ? "onchain" : "local fallback");
       if (!wrapPairId && enriched.length) setWrapPairId(idOf(enriched[0]));
     } catch {
       setPairs(FALLBACK_PAIRS);
@@ -358,6 +369,7 @@ export default function Home() {
   const arbDecrypt = async () => {
     const addr = arbAddr.trim();
     if (addr.length < 6 || arbBusy) return;
+    if (!publicClient || !address) return;
     if (!/^0x[0-9a-fA-F]{40}$/.test(addr)) {
       showToast("!", "var(--bad)", "Invalid address", "Paste a valid ERC-7984 address");
       return;
@@ -372,10 +384,13 @@ export default function Home() {
       const match = pairs.find((r) => r.confidentialTokenAddress.toLowerCase() === addr.toLowerCase());
       // ERC-7984 confidential tokens are 6-decimal (min(underlying,6)); default to 6 for unknown tokens.
       const decimals = confDecimalsOf(match?.decimals ?? 6);
+      // Real ciphertext handle from the contract — not a placeholder.
+      const rawHandle = await publicClient.readContract({
+        address: addr as `0x${string}`, abi: WRAPPER_ABI, functionName: "confidentialBalanceOf", args: [address],
+      });
+      const handle = rawHandle.slice(0, 10) + "…" + rawHandle.slice(-8);
       const plain = await runUserDecrypt(addr as `0x${string}`);
       const val = Number(formatUnits(plain, decimals));
-      const handle = "0x" + Array.from({ length: 8 }, () => Math.floor(Math.random() * 16).toString(16)).join("") +
-        "…" + Array.from({ length: 6 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
       setArbResult({
         sym: match?.confSymbol ?? "cTKN",
         name: match?.confName ?? "ERC-7984 token",

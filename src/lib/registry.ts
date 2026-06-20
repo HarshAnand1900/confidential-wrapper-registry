@@ -54,6 +54,35 @@ export const CONFIDENTIAL_DECIMALS = 6;
 export const confDecimalsOf = (underlyingDecimals: number) =>
   Math.min(underlyingDecimals, CONFIDENTIAL_DECIMALS);
 
+// Purely-cosmetic glyph/color per token, keyed by the underlying ERC-20 address (lowercased).
+// All real data (symbol/name/decimals/pairs) is read live from chain — this map only styles the UI.
+const VISUALS: Record<string, { glyph: string; dotColor: string }> = {
+  "0xa7da08fafdc9097cc0e7d4f113a61e31d7e8e9b0": { glyph: "₮", dotColor: "linear-gradient(135deg,#26A17B,#3ed6a6)" },
+  "0x9b5cd13b8efbb58dc25a05cf411d8056058adfff": { glyph: "$", dotColor: "linear-gradient(135deg,#2775CA,#4f9bf0)" },
+  "0xff54739b16576fa5402f211d0b938469ab9a5f3f": { glyph: "Ξ", dotColor: "linear-gradient(135deg,#627EEA,#a3b6ff)" },
+  "0xff021fb13ca64e5354c62c954b949a88cfdeb25e": { glyph: "◈", dotColor: "linear-gradient(135deg,#F5AC37,#ffd17a)" },
+  "0x75355a85c6fb9df5f0c80ff54e8747eee9a0bf57": { glyph: "Z", dotColor: "linear-gradient(135deg,#FFD60A,#ffaa3c)" },
+  "0x93c931278a2aad1916783f952f94276ea5111442": { glyph: "£", dotColor: "linear-gradient(135deg,#1A4FD6,#5b87f5)" },
+  "0x24377ae4aa0c45ecee71225007f17c5d423dd940": { glyph: "Au", dotColor: "linear-gradient(135deg,#F09242,#ffc089)" },
+  "0xf6ef9adb61a48e29e36bc873070a46a3d2667ff3": { glyph: "£", dotColor: "linear-gradient(135deg,#159E6E,#46d6a0)" },
+};
+
+const FALLBACK_GRADIENTS = [
+  "linear-gradient(135deg,#8E7CFF,#b9a8ff)",
+  "linear-gradient(135deg,#26A17B,#3ed6a6)",
+  "linear-gradient(135deg,#E06A9B,#ffa8cc)",
+  "linear-gradient(135deg,#4f9bf0,#8fc2ff)",
+];
+
+// Deterministic cosmetic styling for any token, derived from its address when not in VISUALS.
+export function visualFor(underlyingAddress: string, symbol?: string): { glyph: string; dotColor: string } {
+  const key = underlyingAddress.toLowerCase();
+  if (VISUALS[key]) return VISUALS[key];
+  const seed = parseInt(key.slice(2, 6), 16) || 0;
+  const glyph = (symbol ?? "?").replace(/^c/, "").slice(0, 2).toUpperCase() || "?";
+  return { glyph, dotColor: FALLBACK_GRADIENTS[seed % FALLBACK_GRADIENTS.length] };
+}
+
 export type TokenPair = {
   tokenAddress: `0x${string}`;
   confidentialTokenAddress: `0x${string}`;
