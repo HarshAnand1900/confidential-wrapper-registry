@@ -606,7 +606,12 @@ export default function Home() {
                 <div style={{ width: 12, height: 12, borderRadius: 4, background: "linear-gradient(135deg,var(--accent),var(--violet))" }} />
               </div>
               <span style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 17, letterSpacing: "-.01em" }}>VEIL</span>
-              <span style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 6, padding: "5px 10px", borderRadius: 99, background: "var(--surface)", border: "1px solid var(--border)", fontSize: 11.5, color: "var(--muted)", fontWeight: 500 }}>
+              <a href="/docs" target="_blank" rel="noopener noreferrer" style={{ marginLeft: 4, padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 600, color: "var(--muted)", fontFamily: "'Instrument Sans'", textDecoration: "none", border: "1px solid var(--border)", background: "var(--surface)", transition: "color .15s, border-color .15s" }}
+                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--accent)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--muted)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border)"; }}>
+                Docs ↗
+              </a>
+              <span style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 2, padding: "5px 10px", borderRadius: 99, background: "var(--surface)", border: "1px solid var(--border)", fontSize: 11.5, color: "var(--muted)", fontWeight: 500 }}>
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: wrongNetwork ? "var(--bad)" : "var(--good)", boxShadow: `0 0 8px ${wrongNetwork ? "var(--bad)" : "var(--good)"}` }} />
                 {wrongNetwork ? "Wrong network" : "Sepolia"}
               </span>
