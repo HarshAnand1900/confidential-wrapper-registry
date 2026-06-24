@@ -26,7 +26,7 @@ import {
 } from "@/lib/registry";
 import { getFhevm } from "@/lib/fhe";
 import { playSuccess, playCoin } from "@/lib/sound";
-import { VeilCanvas } from "@/components/VeilCanvas";
+import { VesperCanvas } from "@/components/VesperCanvas";
 import { TokenIcon } from "@/components/TokenIcon";
 
 type Tab = "registry" | "wrap" | "decrypt" | "faucet";
@@ -544,7 +544,7 @@ export default function Home() {
         transition: "background .5s ease, color .5s ease",
       }}
     >
-      <VeilCanvas screen={screen} heroRef={heroRef} chipsRef={chipsRef} />
+      <VesperCanvas screen={screen} heroRef={heroRef} chipsRef={chipsRef} />
 
       {/* ===================== LANDING ===================== */}
       {screen === "landing" && (
@@ -555,14 +555,14 @@ export default function Home() {
               <div style={{ width: 30, height: 30, borderRadius: 9, background: "#16151d", border: "1px solid rgba(255,255,255,.09)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ width: 13, height: 13, borderRadius: 4, background: "#FFD60A", boxShadow: "0 0 14px rgba(255,214,10,.7)" }} />
               </div>
-              <span style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 19, letterSpacing: "-.01em", color: "#f4f3f8" }}>VEIL</span>
+              <span style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 19, letterSpacing: "-.01em", color: "#f4f3f8" }}>Vesper</span>
               <span style={{ fontSize: 12, color: "#7d7b8c", fontWeight: 500, marginTop: 2 }}>Confidential Wrapper Registry</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ display: "flex", alignItems: "center", gap: 7, padding: "8px 13px", borderRadius: 99, background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.09)", fontSize: 12.5, color: "#a3a1b2", fontWeight: 500, fontFamily: "'JetBrains Mono'" }}>
                 <span style={{ width: 7, height: 7, borderRadius: "50%", background: "oklch(0.78 0.16 150)", boxShadow: "0 0 8px oklch(0.78 0.16 150)" }} />Sepolia
               </span>
-              <button onClick={openConnectModal} className="veil-hover-bright" style={{ padding: "10px 18px", borderRadius: 11, border: "none", cursor: "pointer", fontFamily: "'Instrument Sans'", fontSize: 14, fontWeight: 600, color: "#1a1407", background: "#FFD60A", transition: "filter .2s" }}>Connect</button>
+              <button onClick={openConnectModal} className="vesper-hover-bright" style={{ padding: "10px 18px", borderRadius: 11, border: "none", cursor: "pointer", fontFamily: "'Instrument Sans'", fontSize: 14, fontWeight: 600, color: "#1a1407", background: "#FFD60A", transition: "filter .2s" }}>Connect</button>
             </div>
           </div>
 
@@ -588,10 +588,10 @@ export default function Home() {
                 Every official ERC-20 ↔ ERC-7984 wrapper on Sepolia, in one registry. Balances stay encrypted on-chain — sweep your cursor to decrypt the field, then connect to wrap, unwrap, and reveal your own.
               </p>
               <div style={{ display: "flex", gap: 13, alignItems: "center", justifyContent: "center", flexWrap: "wrap", marginBottom: 28 }}>
-                <button onClick={openConnectModal} className="veil-cta" style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "15px 28px", borderRadius: 13, border: "none", cursor: "pointer", fontFamily: "'Instrument Sans'", fontSize: 15.5, fontWeight: 600, color: "#1a1407", background: "#FFD60A", boxShadow: "0 14px 40px rgba(255,214,10,.22)", transition: "transform .2s, box-shadow .2s" }}>
+                <button onClick={openConnectModal} className="vesper-cta" style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "15px 28px", borderRadius: 13, border: "none", cursor: "pointer", fontFamily: "'Instrument Sans'", fontSize: 15.5, fontWeight: 600, color: "#1a1407", background: "#FFD60A", boxShadow: "0 14px 40px rgba(255,214,10,.22)", transition: "transform .2s, box-shadow .2s" }}>
                   Connect wallet <span style={{ fontSize: 17, lineHeight: 1 }}>→</span>
                 </button>
-                <button onClick={openConnectModal} className="veil-hover-white05" style={{ padding: "15px 24px", borderRadius: 13, cursor: "pointer", fontFamily: "'Instrument Sans'", fontSize: 15.5, fontWeight: 500, color: "#e8e7ef", background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.14)", transition: "background .2s" }}>Browse the registry</button>
+                <button onClick={openConnectModal} className="vesper-hover-white05" style={{ padding: "15px 24px", borderRadius: 13, cursor: "pointer", fontFamily: "'Instrument Sans'", fontSize: 15.5, fontWeight: 500, color: "#e8e7ef", background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.14)", transition: "background .2s" }}>Browse the registry</button>
               </div>
               <div style={{ display: "inline-flex", alignItems: "center", gap: 9, fontFamily: "'JetBrains Mono'", fontSize: 11.5, letterSpacing: ".04em", color: "#7a7a8e" }}>
                 <span style={{ width: 16, height: 16, borderRadius: "50%", border: "1.5px solid oklch(0.8 0.13 174)", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 8, color: "oklch(0.84 0.13 174)" }}>◎</span>
@@ -604,7 +604,7 @@ export default function Home() {
 
       {/* ===================== APP ===================== */}
       {screen === "app" && (
-        <div className="veil-scroll" style={{ position: "relative", zIndex: 2, minHeight: "100vh" }}>
+        <div className="vesper-scroll" style={{ position: "relative", zIndex: 2, minHeight: "100vh" }}>
           <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "radial-gradient(80% 50% at 50% -10%, var(--violet-dim), transparent 70%)" }} />
 
           {/* topbar */}
@@ -613,7 +613,7 @@ export default function Home() {
               <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--surface2)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border)" }}>
                 <div style={{ width: 12, height: 12, borderRadius: 4, background: "linear-gradient(135deg,var(--accent),var(--violet))" }} />
               </div>
-              <span style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 17, letterSpacing: "-.01em" }}>VEIL</span>
+              <span style={{ fontFamily: "'Space Grotesk'", fontWeight: 700, fontSize: 17, letterSpacing: "-.01em" }}>Vesper</span>
               <a href="/docs" target="_blank" rel="noopener noreferrer" style={{ marginLeft: 4, padding: "4px 10px", borderRadius: 8, fontSize: 12, fontWeight: 600, color: "var(--muted)", fontFamily: "'Instrument Sans'", textDecoration: "none", border: "1px solid var(--border)", background: "var(--surface)", transition: "color .15s, border-color .15s" }}
                 onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--accent)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = "var(--muted)"; (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border)"; }}>
@@ -637,9 +637,9 @@ export default function Home() {
               {wrongNetwork && (
                 <button onClick={() => switchChain({ chainId: sepolia.id })} style={{ padding: "8px 13px", borderRadius: 11, cursor: "pointer", border: "1px solid var(--bad)", background: "transparent", color: "var(--bad)", fontFamily: "'Instrument Sans'", fontWeight: 600, fontSize: 13 }}>Switch to Sepolia</button>
               )}
-              <button onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))} title="Toggle theme" className="veil-hover-border" style={{ width: 38, height: 38, borderRadius: 11, cursor: "pointer", border: "1px solid var(--border)", background: "var(--surface)", color: "var(--muted)", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s" }}>{themeIcon}</button>
+              <button onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))} title="Toggle theme" className="vesper-hover-border" style={{ width: 38, height: 38, borderRadius: 11, cursor: "pointer", border: "1px solid var(--border)", background: "var(--surface)", color: "var(--muted)", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s" }}>{themeIcon}</button>
               <div style={{ position: "relative" }}>
-                <button onClick={() => setWalletOpen(o => !o)} className="veil-hover-border" style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 9px 8px 13px", borderRadius: 11, cursor: "pointer", border: `1px solid ${walletOpen ? "var(--accent)" : "var(--border)"}`, background: "var(--surface)", transition: "border-color .2s" }}>
+                <button onClick={() => setWalletOpen(o => !o)} className="vesper-hover-border" style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 9px 8px 13px", borderRadius: 11, cursor: "pointer", border: `1px solid ${walletOpen ? "var(--accent)" : "var(--border)"}`, background: "var(--surface)", transition: "border-color .2s" }}>
                   <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--good)", boxShadow: "0 0 8px var(--good)" }} />
                   <span style={{ fontFamily: "'JetBrains Mono'", fontSize: 12.5, fontWeight: 500, color: "var(--text)" }}>{shortAddr}</span>
                   <span style={{ width: 24, height: 24, borderRadius: 7, background: "linear-gradient(135deg,var(--accent),var(--violet))" }} />
@@ -737,7 +737,7 @@ export default function Home() {
                       const erc20Fmt = fmtNum(Number(formatUnits(erc20Bal[id] ?? BigInt(0), p.decimals ?? 18))) + " " + p.symbol;
                       const confFmt = fmtNum(decryptedVal[id] ?? 0) + " " + p.confSymbol;
                       return (
-                        <div key={id} className="veil-hover-lift" style={{ padding: 18, borderRadius: 18, background: "var(--surface)", border: "1px solid var(--border)", transition: "border-color .2s, transform .2s", animation: "popIn .35s ease both" }}>
+                        <div key={id} className="vesper-hover-lift" style={{ padding: 18, borderRadius: 18, background: "var(--surface)", border: "1px solid var(--border)", transition: "border-color .2s, transform .2s", animation: "popIn .35s ease both" }}>
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
                               <TokenIcon symbol={p.symbol} size={42} radius={13} />
@@ -770,8 +770,8 @@ export default function Home() {
                           </div>
 
                           <div style={{ display: "flex", gap: 8 }}>
-                            <button onClick={goWrap(id, "wrap")} className="veil-hover-bright6" style={{ flex: 1, padding: 10, borderRadius: 11, border: "none", cursor: "pointer", fontFamily: "'Instrument Sans'", fontWeight: 600, fontSize: 13, color: accentInk, background: "var(--accent)", transition: "filter .2s" }}>Wrap →</button>
-                            <button onClick={goWrap(id, "unwrap")} className="veil-hover-border" style={{ flex: 1, padding: 10, borderRadius: 11, cursor: "pointer", fontFamily: "'Instrument Sans'", fontWeight: 600, fontSize: 13, color: "var(--text)", background: "var(--surface2)", border: "1px solid var(--border)", transition: "border-color .2s" }}>← Unwrap</button>
+                            <button onClick={goWrap(id, "wrap")} className="vesper-hover-bright6" style={{ flex: 1, padding: 10, borderRadius: 11, border: "none", cursor: "pointer", fontFamily: "'Instrument Sans'", fontWeight: 600, fontSize: 13, color: accentInk, background: "var(--accent)", transition: "filter .2s" }}>Wrap →</button>
+                            <button onClick={goWrap(id, "unwrap")} className="vesper-hover-border" style={{ flex: 1, padding: 10, borderRadius: 11, cursor: "pointer", fontFamily: "'Instrument Sans'", fontWeight: 600, fontSize: 13, color: "var(--text)", background: "var(--surface2)", border: "1px solid var(--border)", transition: "border-color .2s" }}>← Unwrap</button>
                             {!isDec ? (
                               <button onClick={decrypt(id)} title="Decrypt balance" style={{ width: 42, padding: 10, borderRadius: 11, cursor: "pointer", border: "1px solid color-mix(in oklch, var(--violet) 40%, transparent)", background: "var(--violet-dim)", color: "var(--violet)", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", transition: "all .2s" }}>
                                 {isDecing ? <span style={{ width: 14, height: 14, border: "2px solid var(--violet)", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin .7s linear infinite" }} /> : <span>🔓</span>}
@@ -800,7 +800,7 @@ export default function Home() {
                       const erc20Fmt = fmtNum(Number(formatUnits(erc20Bal[id] ?? BigInt(0), p.decimals ?? 18))) + " " + p.symbol;
                       const confFmt = fmtNum(decryptedVal[id] ?? 0) + " " + p.confSymbol;
                       return (
-                        <div key={id} className="veil-hover-row" style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1.1fr 1.1fr 1.3fr", gap: 12, padding: "14px 18px", alignItems: "center", borderBottom: "1px solid var(--border)", transition: "background .15s" }}>
+                        <div key={id} className="vesper-hover-row" style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1.1fr 1.1fr 1.3fr", gap: 12, padding: "14px 18px", alignItems: "center", borderBottom: "1px solid var(--border)", transition: "background .15s" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                             <TokenIcon symbol={p.symbol} size={32} radius={10} />
                             <div><div style={{ fontFamily: "'Space Grotesk'", fontWeight: 600, fontSize: 14 }}>{p.confSymbol}</div><div style={{ fontSize: 11.5, color: "var(--muted)" }}>{p.name} · {p.decimals}→{p.confDecimals ?? confDecimalsOf(p.decimals ?? 18)} dec · rate {formatRate(p.rate)}</div></div>
@@ -929,7 +929,7 @@ export default function Home() {
                 <div style={{ padding: 22, borderRadius: 20, background: "var(--surface)", border: "1px solid var(--border)", marginBottom: 16 }}>
                   <div style={{ fontSize: 12.5, color: "var(--muted)", marginBottom: 10, fontWeight: 500 }}>ERC-7984 token address</div>
                   <div style={{ display: "flex", gap: 9, marginBottom: 14 }}>
-                    <input value={arbAddr} onChange={(e) => { setArbAddr(e.target.value); setArbResult(null); }} placeholder="0x… any confidential token" className="veil-focus-violet" style={{ flex: 1, padding: "13px 14px", borderRadius: 12, background: "var(--bg2)", border: "1px solid var(--border)", outline: "none", fontFamily: "'JetBrains Mono'", fontSize: 13, color: "var(--text)" }} />
+                    <input value={arbAddr} onChange={(e) => { setArbAddr(e.target.value); setArbResult(null); }} placeholder="0x… any confidential token" className="vesper-focus-violet" style={{ flex: 1, padding: "13px 14px", borderRadius: 12, background: "var(--bg2)", border: "1px solid var(--border)", outline: "none", fontFamily: "'JetBrains Mono'", fontSize: 13, color: "var(--text)" }} />
                     <button onClick={arbDecrypt} disabled={arbBusy || arbAddr.trim().length < 6} style={{ padding: "13px 20px", borderRadius: 12, border: "none", cursor: arbBusy || arbAddr.trim().length < 6 ? "default" : "pointer", fontFamily: "'Instrument Sans'", fontWeight: 600, fontSize: 14, color: "#fff", background: "var(--violet)", opacity: arbBusy || arbAddr.trim().length < 6 ? 0.55 : 1, display: "flex", alignItems: "center", gap: 8, whiteSpace: "nowrap", transition: "all .2s" }}>
                       {arbBusy ? <><span style={{ width: 14, height: 14, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin .7s linear infinite" }} />Signing…</> : "🔓 Decrypt"}
                     </button>
@@ -937,7 +937,7 @@ export default function Home() {
                   <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
                     <span style={{ fontSize: 12, color: "var(--faint)", alignSelf: "center" }}>Quick fill:</span>
                     {pairs.slice(0, 4).map((p) => (
-                      <button key={idOf(p)} onClick={() => { setArbAddr(p.confidentialTokenAddress); setArbResult(null); }} className="veil-hover-border" style={{ padding: "5px 10px", borderRadius: 7, cursor: "pointer", border: "1px solid var(--border)", background: "var(--bg2)", color: "var(--muted)", fontSize: 11.5, fontFamily: "'JetBrains Mono'" }}>{p.confSymbol}</button>
+                      <button key={idOf(p)} onClick={() => { setArbAddr(p.confidentialTokenAddress); setArbResult(null); }} className="vesper-hover-border" style={{ padding: "5px 10px", borderRadius: 7, cursor: "pointer", border: "1px solid var(--border)", background: "var(--bg2)", color: "var(--muted)", fontSize: 11.5, fontFamily: "'JetBrains Mono'" }}>{p.confSymbol}</button>
                     ))}
                   </div>
                 </div>

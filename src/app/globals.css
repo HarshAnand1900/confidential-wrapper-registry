@@ -41,15 +41,15 @@ body {
 @keyframes sharpen { from { filter: blur(9px); opacity: .4; letter-spacing: 2px; } to { filter: blur(0); opacity: 1; letter-spacing: 0; } }
 @keyframes glowpulse { 0%, 100% { box-shadow: 0 0 0 0 var(--violet-dim); } 50% { box-shadow: 0 0 0 8px transparent; } }
 
-.veil-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
-.veil-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 20px; border: 3px solid transparent; background-clip: padding-box; }
+.vesper-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+.vesper-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 20px; border: 3px solid transparent; background-clip: padding-box; }
 
 /* hover/focus helpers ported from the design's style-hover/style-focus */
-.veil-hover-bright:hover { filter: brightness(1.07); }
-.veil-hover-bright6:hover { filter: brightness(1.06); }
-.veil-hover-lift:hover { border-color: var(--border2); transform: translateY(-2px); }
-.veil-hover-border:hover { border-color: var(--border2); }
-.veil-hover-white05:hover { background: rgba(255,255,255,.1); }
-.veil-cta:hover { transform: translateY(-2px); box-shadow: 0 20px 50px rgba(255,214,10,.32); }
-.veil-focus-violet:focus { border-color: var(--violet); }
-.veil-hover-row:hover { background: var(--bg2); }
+.vesper-hover-bright:hover { filter: brightness(1.07); }
+.vesper-hover-bright6:hover { filter: brightness(1.06); }
+.vesper-hover-lift:hover { border-color: var(--border2); transform: translateY(-2px); }
+.vesper-hover-border:hover { border-color: var(--border2); }
+.vesper-hover-white05:hover { background: rgba(255,255,255,.1); }
+.vesper-cta:hover { transform: translateY(-2px); box-shadow: 0 20px 50px rgba(255,214,10,.32); }
+.vesper-focus-violet:focus { border-color: var(--violet); }
+.vesper-hover-row:hover { background: var(--bg2); }

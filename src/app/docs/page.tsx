@@ -29,7 +29,7 @@ export default function DocsPage() {
           <div style={{ width: 26, height: 26, borderRadius: 7, background: "#16151f", border: "1px solid #2a2938", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ width: 11, height: 11, borderRadius: 3, background: "#FFD60A" }} />
           </div>
-          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 16, color: "#f4f3f8" }}>VEIL</span>
+          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: 16, color: "#f4f3f8" }}>Vesper</span>
         </Link>
         <span style={{ color: "#3a3848", fontSize: 16 }}>/</span>
         <span style={{ fontSize: 14, color: "#888", fontWeight: 500 }}>Documentation</span>
@@ -50,8 +50,8 @@ export default function DocsPage() {
         {/* content */}
         <main style={{ flex: 1, minWidth: 0 }}>
 
-          <Section id="overview" title="What is VEIL?">
-            <P>VEIL is a front-end for Zama&apos;s official <B>Confidential Wrapper Registry</B> on Ethereum Sepolia. It lets you wrap standard ERC-20 tokens into their encrypted ERC-7984 equivalents — where balances are hidden on-chain using Fully Homomorphic Encryption (FHE).</P>
+          <Section id="overview" title="What is Vesper?">
+            <P>Vesper is a front-end for Zama&apos;s official <B>Confidential Wrapper Registry</B> on Ethereum Sepolia. It lets you wrap standard ERC-20 tokens into their encrypted ERC-7984 equivalents — where balances are hidden on-chain using Fully Homomorphic Encryption (FHE).</P>
             <P>Nobody — not even the chain — can read your balance. Only you can decrypt it, using your wallet signature.</P>
             <Cards items={[
               { icon: "▦", title: "Registry", desc: "Browse all 8 official ERC-20 ↔ ERC-7984 pairs registered by Zama on Sepolia." },

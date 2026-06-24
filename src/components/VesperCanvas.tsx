@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-interface VeilCanvasProps {
+interface VesperCanvasProps {
   screen: "landing" | "app";
   heroRef: React.RefObject<HTMLDivElement | null>;
   chipsRef: React.RefObject<HTMLDivElement | null>;
@@ -12,7 +12,7 @@ interface VeilCanvasProps {
  * Cursor-reactive canvas background ported verbatim from the Veil design.
  * Landing: "decrypt lens" ciphertext field. App: FHE lattice grid.
  */
-export function VeilCanvas({ screen, heroRef, chipsRef }: VeilCanvasProps) {
+export function VesperCanvas({ screen, heroRef, chipsRef }: VesperCanvasProps) {
   const gridRef = useRef<HTMLCanvasElement>(null);
   const screenRef = useRef(screen);
   screenRef.current = screen;

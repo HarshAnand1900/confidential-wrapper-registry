@@ -3,7 +3,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "VEIL — Confidential Wrapper Registry",
+  title: "Vesper — Confidential Wrapper Registry",
   description: "Wrap, unwrap, and decrypt ERC-7984 confidential tokens on Sepolia. Powered by Zama FHE.",
 };
 

@@ -96,7 +96,7 @@ export type TokenPair = {
   confDecimals?: number;
   rate?: bigint;
   noFaucet?: boolean; // true when underlying ERC-20 has no public mint() // 10^(underlyingDecimals - confDecimals); base-unit conversion factor
-  // visual metadata (Veil design)
+  // visual metadata (Vesper design)
   glyph?: string;
   dotColor?: string;
 };
