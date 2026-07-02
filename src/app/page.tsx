@@ -166,13 +166,13 @@ export default function Home() {
 
       setPairs(enriched.length ? enriched : FALLBACK_PAIRS);
       setRegistrySource(enriched.length ? "onchain" : "local fallback");
-      if (!wrapPairId && enriched.length) setWrapPairId(idOf(enriched[0]));
+      if (enriched.length) setWrapPairId((cur) => cur || idOf(enriched[0]));
     } catch {
       setPairs(FALLBACK_PAIRS);
       setRegistrySource("local fallback");
-      if (!wrapPairId) setWrapPairId(idOf(FALLBACK_PAIRS[0]));
+      setWrapPairId((cur) => cur || idOf(FALLBACK_PAIRS[0]));
     }
-  }, [publicClient, wrapPairId]);
+  }, [publicClient]);
 
   const loadBalances = useCallback(async () => {
     if (!publicClient || !address || pairs.length === 0) return;
@@ -321,6 +321,18 @@ export default function Home() {
           showToast("!", "var(--bad)", "Invalid amount", "Enter a valid number");
           return;
         }
+        // ERC-7984 cannot revert on insufficient encrypted balance (that would leak
+        // the amount) — it silently transfers 0. Guard with the decrypted balance
+        // so the UI never reports a success that moved nothing.
+        const knownBal = decryptedVal[wrapPairId];
+        if (knownBal === undefined) {
+          showToast("🔒", "var(--violet)", "Reveal balance first", "Decrypt your confidential balance before unwrapping");
+          return;
+        }
+        if (amt > knownBal) {
+          showToast("!", "var(--bad)", "Insufficient confidential balance", `You only have ${fmtNum(knownBal)} ${p.confSymbol}`);
+          return;
+        }
         const provider = (window as { ethereum?: unknown }).ethereum as import("ethers").Eip1193Provider;
         if (!provider) throw new Error("window.ethereum not found — connect a wallet first");
 
@@ -344,6 +356,7 @@ export default function Home() {
           account: address,
         });
         const receipt = await publicClient.waitForTransactionReceipt({ hash: unwrapTx });
+        if (receipt.status === "reverted") throw new Error("Unwrap transaction reverted");
 
         // Recover the unwrap request id from the emitted event
         const events = parseEventLogs({ abi: WRAPPER_ABI, eventName: "UnwrapRequested", logs: receipt.logs });
@@ -365,8 +378,10 @@ export default function Home() {
               decryptionProof = pub.decryptionProof;
             }
           } catch {
-            await new Promise((r) => setTimeout(r, 2500));
+            // relayer not ready yet — fall through to the shared backoff below
           }
+          // Wait between every attempt (success-without-entry included), not only on throw.
+          if (cleartext === undefined) await new Promise((r) => setTimeout(r, 2500));
         }
         if (cleartext === undefined || !decryptionProof) {
           throw new Error("Relayer decryption pending — retry finalize shortly");
